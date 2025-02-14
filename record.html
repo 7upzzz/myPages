@@ -448,7 +448,8 @@
             action,
             price,
             quantity,
-            total: price * quantity,
+            // total: price * quantity,
+            average: price / quantity,
             timestamp: new Date().toISOString()
         });
 
@@ -490,9 +491,9 @@
         <tr class="${record.action}">
             <td>${currentCurrency}</td>
             <td>${record.action.toUpperCase()}</td>
-            <td>${record.price.toFixed(4)}</td>
+            <td>${record.average.toFixed(4)}</td>
             <td>${record.quantity.toFixed(4)}</td>
-            <td>${record.total.toFixed(2)}</td>
+            <td>${record.price.toFixed(2)}</td>
             <td>
                 <button class="delete" onclick="deleteRecord(${index})">
                     <i class="fas fa-trash-alt"></i>
@@ -512,19 +513,18 @@
     }
 
     function calculatePosition() {
-        let totalQty = 0, totalCost = 0;
+        let totalQty = 0, totalValue = 0, avgPrice = 0;
 
         records[currentCurrency].forEach(record => {
             if (record.action === 'buy') {
+                console.log(record.price,records.average)
                 totalQty += record.quantity;
-                totalCost += record.price * record.quantity;
+                totalValue += record.price
+                avgPrice = totalValue / totalQty
             } else {
                 totalQty -= record.quantity;
             }
         });
-
-        const avgPrice = totalQty > 0 ? (totalCost / totalQty) : 0;
-        const totalValue = totalQty * avgPrice;
 
         // 更新显示
         document.getElementById('totalQuantity').textContent = totalQty.toFixed(2);
