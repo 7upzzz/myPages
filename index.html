@@ -686,8 +686,9 @@
         async function updateNutsPrice() {
             // const currencyId = currentCurrency.toLowerCase(); // CoinGecko 使用小写的货币 ID
 
-            const currencyId = "DEEZgP19ZPovNeWRJZw7KuNbkLH6xjNjZ4HsUJnmZv7J-solana"
-            const price = await getAveCryptoPrice(currencyId);
+            // const currencyId = "DEEZgP19ZPovNeWRJZw7KuNbkLH6xjNjZ4HsUJnmZv7J-solana"
+            const currencyId = 'deez-nuts-sol'
+            const price = await getGeckoCryptoPrice(currencyId);
 
             if (price) {
                 document.title = price;
