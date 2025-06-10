@@ -458,22 +458,43 @@
         calculatePosition();
     }
 
-    async function getCryptoPrice(currencyId) {
+    async function getAveCryptoPrice(currencyId) {
         try {
-            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${currencyId}&vs_currencies=usd`);
+            const response = await fetch(`https://prod.ave-api.com/v2/tokens/price`, {
+                method: 'POST', // 改成 POST 请求
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-API-KEY': 'jB4TU0T4yGM3HGwv9cu6ScNnqHXP6DKC50gqlixanbq0gtZCAHWOaCNjV3UYDuPg',
+                },
+                body: JSON.stringify({
+                    token_ids: [currencyId],
+                })
+            });
             const data = await response.json();
-            return data[currencyId]?.usd || null; // 返回价格，如果不存在则返回 null
+            return data['data'][currencyId]?.current_price_usd || null;
         } catch (error) {
             console.error("获取实时价格时出错:", error);
             return null;
         }
     }
 
+    async function getGeckoCryptoPrice(currencyId) {
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${currencyId}&vs_currencies=usd`);
+                const data = await response.json();
+                return data[currencyId]?.usd || null; // 返回价格，如果不存在则返回 null
+            } catch (error) {
+                console.error("获取实时价格时出错:", error);
+                return null;
+            }
+        }
+
     async function updateRealTimePrice(qu) {
         // const currencyId = currentCurrency.toLowerCase(); // CoinGecko 使用小写的货币 ID
 
-        const currencyId = 'deez-nuts-sol'
-        const price = await getCryptoPrice(currencyId);
+        const currencyId = "DEEZgP19ZPovNeWRJZw7KuNbkLH6xjNjZ4HsUJnmZv7J-solana"
+        const price = await getAveCryptoPrice(currencyId);
         const priceElement = document.getElementById("realTimePrice");
 
         if (price) {
@@ -517,7 +538,7 @@
 
         records[currentCurrency].forEach(record => {
             if (record.action === 'buy') {
-                console.log(record.price,records.average)
+                console.log(record.price, records.average)
                 totalQty += record.quantity;
                 totalValue += record.price
                 avgPrice = totalValue / totalQty
